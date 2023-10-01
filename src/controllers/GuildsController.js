@@ -16,7 +16,7 @@ class GuildsController {
       throw new AppError('Este nome de guild já está em uso.')
     }
 
-    // Criar um registro na tabela `dono` com tipo 2 (conforme mencionado)
+    // Criar um registro na tabela `dono` com tipo 2
     await database.run(
       'INSERT INTO dono (tipo) VALUES (?)',
       [2] // Tipo de dono para guild (2)
@@ -27,7 +27,7 @@ class GuildsController {
       'SELECT last_insert_rowid() AS lastID'
     )
 
-    // Crie a guild vinculando-a ao dono
+    // Cria a guild vinculando-a ao dono
     await database.run('INSERT INTO guild (name, guild_id) VALUES (?, ?)', [
       name,
       lastID
@@ -42,7 +42,7 @@ class GuildsController {
 
     const database = await sqliteConnection()
 
-    // Verifique se a guild existe
+    // Verifica se a guild existe
     const checkGuildExists = await database.get(
       'SELECT * FROM guild WHERE guild_id = (?)',
       [guild_id]
@@ -52,7 +52,7 @@ class GuildsController {
       throw new AppError('Guild não encontrada no banco de dados.')
     }
 
-    // Atualize o nome da guild
+    // Atualiza o nome da guild
     await database.run('UPDATE guild SET name = (?) WHERE guild_id = (?)', [
       name,
       guild_id
@@ -76,7 +76,7 @@ class GuildsController {
       throw new AppError('Guild não encontrada no banco de dados.')
     }
 
-    // Consulta para obter a lista de jogadores com cargo diferente de 0 na tabela "pertence"
+    // Consulta para obter a lista de jogadores com cargo != 0 (os ativos) na tabela "pertence"
     const playersInfo = await database.all(
       'SELECT p.name AS player_name, pertence.cargo ' +
         'FROM player p ' +
@@ -85,7 +85,7 @@ class GuildsController {
       [guild_id]
     )
 
-    // Combine as informações da guild e dos jogadores
+    // Combina as informações da guild e dos jogadores
     const result = {
       guild_id: guildInfo.guild_id,
       name: guildInfo.name,

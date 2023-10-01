@@ -20,13 +20,11 @@ class PlayersController {
     // Criar um registro na tabela `dono` ao criar um player
     await database.run(
       'INSERT INTO dono (tipo) VALUES (?)',
-      [1] // Defina o valor do tipo de dono conforme necessário
+      [1] // Para definir o valor do tipo dono, 1 serão os players
     );
 
-    // Recupere o ID do dono recém-criado
     const { lastID } = await database.get('SELECT last_insert_rowid() AS lastID');
 
-    // Crie o player vinculando-o ao dono
     await database.run(
       'INSERT INTO player ( name, player_id) VALUES (?, ?)',
       [ name, lastID]
@@ -51,7 +49,7 @@ class PlayersController {
       throw new AppError('Jogador não encontrado no banco de dados.');
     }
 
-    // Atualize o nome do jogador
+    // Atualiza o nome do jogador
     await database.run(
       'UPDATE player SET name = (?) WHERE player_id = (?)',
       [name, player_id]
@@ -75,7 +73,7 @@ class PlayersController {
       throw new AppError('Jogador não encontrado no banco de dados.');
     }
 
-    // Atualize o player_guild_id para null para sair da guild
+    // Atualiza o player_guild_id para null para sair da guild
     await database.run(
       'UPDATE player SET player_guild_id = null WHERE player_id = (?)',
       [player_id]
@@ -105,16 +103,16 @@ class PlayersController {
       throw new AppError('Jogador não encontrado no banco de dados.');
     }
 
-    // Atualize o campo player_guild_id para associar o jogador à guild
+    // Atualiza o campo player_guild_id para associar o jogador à guild
     await database.run(
       'UPDATE player SET player_guild_id = (?) WHERE player_id = (?)',
       [guildId, player_id]
     );
 
-    // Crie uma nova linha na tabela "pertence" para registrar a associação
+    // Cria uma nova linha na tabela "pertence" para registrar a associação
     await database.run(
       'INSERT INTO pertence (player_id, guild_id) VALUES (?, ?)',
-      [player_id, guildId] // Você pode definir o valor padrão ou especificar o cargo desejado
+      [player_id, guildId]
     );
 
     return response.status(201).json('Jogador associado à guild com sucesso.');
@@ -144,7 +142,7 @@ class PlayersController {
       [player_id]
     )
 
-    // Combine as informações do jogador e da tabela "pertence"
+    // Combina as informações do jogador e da tabela "pertence"
     const result = {
       player_id: playerInfo.player_id,
       name: playerInfo.name,
