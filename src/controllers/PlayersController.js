@@ -28,7 +28,7 @@ class PlayersController {
 
     // Crie o player vinculando-o ao dono
     await database.run(
-      'INSERT INTO player ( name, player_id) VALUES (?, ?, ?, ?)',
+      'INSERT INTO player ( name, player_id) VALUES (?, ?)',
       [ name, lastID]
     );
 
@@ -113,8 +113,8 @@ class PlayersController {
 
     // Crie uma nova linha na tabela "pertence" para registrar a associação
     await database.run(
-      'INSERT INTO pertence (player_id, guild_id, cargo) VALUES (?, ?, ?)',
-      [player_id, guildId, 'ativo'] // Você pode definir o valor padrão ou especificar o cargo desejado
+      'INSERT INTO pertence (player_id, guild_id) VALUES (?, ?)',
+      [player_id, guildId] // Você pode definir o valor padrão ou especificar o cargo desejado
     );
 
     return response.status(201).json('Jogador associado à guild com sucesso.');

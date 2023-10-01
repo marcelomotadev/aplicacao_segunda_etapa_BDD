@@ -10,6 +10,6 @@ playersRoutes.post("/", playersController.create);
 playersRoutes.put("/:player_id", playersController.update);
 playersRoutes.get("/:player_id", playersController.show);
 playersRoutes.put("/:player_id/leave-guild", playersController.leaveGuild);
-playersRoutes.put("/:player_id/enter-guild", playersController.leaveGuild);
+playersRoutes.put("/:player_id/enter-guild", playersController.enterGuild);
 
 module.exports = playersRoutes;

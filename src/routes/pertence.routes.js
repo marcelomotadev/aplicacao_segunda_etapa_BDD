@@ -6,7 +6,7 @@ const pertenceRoutes = Router()
 
 const pertenceController = new PertenceController()
 
-pertenceRoutes.get('/:player_id/:guild_id', pertenceController.show)
+pertenceRoutes.get('/', pertenceController.show)
 pertenceRoutes.put('/:player_id/:guild_id', pertenceController.update)
 
 module.exports = pertenceRoutes
