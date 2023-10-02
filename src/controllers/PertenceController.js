@@ -26,7 +26,7 @@ class PertenceController {
       .json(`Player: ${player_id} agora pertence a guild: ${guild_id}.`)
   }
 
-  async show(response) {
+  async show(request, response) {
     const database = await sqliteConnection();
   
     // Consulta para obter todas as guilds com os players associados
