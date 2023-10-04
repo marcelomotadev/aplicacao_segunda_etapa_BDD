@@ -119,40 +119,51 @@ class PlayersController {
   }
 
   async show(request, response) {
-    const { player_id } = request.params
-
-    const database = await sqliteConnection()
-
-    // Consulta para obter informações do jogador
-    const playerInfo = await database.get(
-      'SELECT p.player_id, p.name, p.player_guild_id, g.name AS guild_name ' +
-        'FROM player p ' +
-        'LEFT JOIN guild g ON p.player_guild_id = g.guild_id ' +
-        'WHERE p.player_id = (?)',
-      [player_id]
-    )
-
-    if (!playerInfo) {
-      throw new AppError('Jogador não encontrado no banco de dados.')
+    const { player_id } = request.params;
+  
+    const database = await sqliteConnection();
+  
+    let query = `
+      SELECT p.player_id, p.name, p.player_guild_id, g.name AS guild_name
+      FROM player p
+      LEFT JOIN guild g ON p.player_guild_id = g.guild_id
+    `;
+  
+    if (player_id) {
+      query += 'WHERE p.player_id = (?)';
     }
-
-    // Consulta para obter informações da tabela "pertence" (cargo e joined_at)
-    const pertenceInfo = await database.all(
-      'SELECT cargo, joined_at ' + 'FROM pertence ' + 'WHERE player_id = (?)',
-      [player_id]
-    )
-
-    // Combina as informações do jogador e da tabela "pertence"
-    const result = {
-      player_id: playerInfo.player_id,
-      name: playerInfo.name,
-      player_guild_id: playerInfo.player_guild_id,
-      guild_name: playerInfo.guild_name,
-      pertence: pertenceInfo
+  
+    const playerInfo = await database.all(query, [player_id]);
+  
+    if (!playerInfo || playerInfo.length === 0) {
+      throw new AppError('Jogador não encontrado no banco de dados.');
     }
+  
+    let result = {};
 
-    return response.status(200).json(result)
-  }
+    if(player_id){
+      let pertenceInfo = await database.all(
+        'SELECT cargo, joined_at FROM pertence WHERE player_id = (?)',
+        [player_id]
+      );
+      result = playerInfo.map((player) => ({
+        player_id: player.player_id,
+        name: player.name,
+        player_guild_id: player.player_guild_id,
+        guild_name: player.guild_name,
+        pertence: pertenceInfo,
+      }));
+    } else {
+      result = playerInfo.map((player) => ({
+        player_id: player.player_id,
+        name: player.name,
+        player_guild_id: player.player_guild_id,
+        guild_name: player.guild_name,
+      }));
+    }
+    
+    return response.status(200).json(result);
+  } 
 
 }
 

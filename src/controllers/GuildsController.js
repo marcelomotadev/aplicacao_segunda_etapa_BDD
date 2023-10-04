@@ -94,6 +94,22 @@ class GuildsController {
 
     return response.status(200).json(result)
   }
+
+  async showAll(request, response) {
+    const database = await sqliteConnection();
+  
+    // Consulta para obter a lista de todas as guilds
+    const guildsInfo = await database.all(
+      'SELECT guild_id, name FROM guild'
+    );
+  
+    // Combina as informações de todas as guilds
+    const result = {
+      guilds: guildsInfo
+    }
+  
+    return response.status(200).json(result);
+  }
 }
 
 module.exports = GuildsController
